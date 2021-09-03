@@ -11,6 +11,6 @@ type Error struct {
 	Message       string  `json:"message"`
 }
 
-func (e Error) Error() error {
-	return e.InternalError
+func (e Error) Error() string {
+	return e.InternalError.Error()
 }
