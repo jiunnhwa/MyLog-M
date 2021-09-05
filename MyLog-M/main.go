@@ -3,6 +3,8 @@ package main
 import (
 	"MyLog-M/driver/sqlite"
 	delivery "MyLog-M/internal/delivery/http"
+	"MyLog-M/internal/repository"
+	"MyLog-M/internal/service"
 	"fmt"
 	"log"
 	"net/http"
@@ -12,14 +14,16 @@ func main() {
 	db := sqlite.Open("log.db")
 	defer sqlite.Close(db)
 
-	handler := delivery.New(db)
+	repo := repository.NewLogRepo(db)
+	s := service.New(repo)
+	handler := delivery.New(s)
 
 	//VIEWS
 	http.HandleFunc("/", home)
 
-	http.HandleFunc("/api/log", handler.MyLog)
+	// http.HandleFunc("/api/log", handler.MyLog)
 	http.HandleFunc("/api/tail", handler.MyTail)
-	http.HandleFunc("/api/view", handler.MyView)
+	// http.HandleFunc("/api/view", handler.MyView)
 
 	log.Println(http.ListenAndServe(":9000", nil))
 }
