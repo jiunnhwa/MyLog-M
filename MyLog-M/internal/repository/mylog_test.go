@@ -2,6 +2,7 @@ package repository
 
 import (
 	"MyLog-M/driver/sqlite"
+	"MyLog-M/internal/domain"
 	"reflect"
 	"testing"
 	"time"
@@ -21,13 +22,13 @@ func TestDatastore(t *testing.T) {
 //"LogType" : "DEBUG","LogSeverity" : 1,"LogText": "TEST 1"
 func testLogRepo_Insert(t *testing.T, db LogRepo) {
 	testcases := []struct {
-		req Data
+		req domain.Data
 		id  int64
 	}{
-		{Data{LogType: "DEBUG", LogSeverity: 1, LogText: "TEST 202"}, 202},
+		{domain.Data{LogType: "DEBUG", LogSeverity: 1, LogText: "TEST 202"}, 202},
 	}
 	for i, v := range testcases {
-		id, _ := db.Insert(v.req)
+		id, _ := db.Insert(&v.req)
 
 		if !reflect.DeepEqual(id, v.id) {
 			t.Errorf("[TEST%d]Failed. Got %v\tExpected %v\n", i+1, id, v.id)
@@ -39,10 +40,10 @@ func testLogRepo_Insert(t *testing.T, db LogRepo) {
 func testLogRepo_Get(t *testing.T, db LogRepo) {
 	testcases := []struct {
 		id   int
-		resp *Data
+		resp *domain.Data
 	}{
-		//{1, []Data{{1, 1628949212, time.Date(2021, 8, 14, 21, 53, 32, 0, time.Local), "DEBUG", 1, "this is a", Status{0, ""}}}},
-		{1, &Data{1, 1628949212, time.Time{}, "DEBUG", 1, "this is a", Status{0, ""}}},
+		//{1, []domain.Data{{1, 1628949212, time.Date(2021, 8, 14, 21, 53, 32, 0, time.Local), "DEBUG", 1, "this is a", Status{0, ""}}}},
+		{1, &domain.Data{1, 1628949212, time.Time{}, "DEBUG", 1, "this is a", domain.Status{0, ""}}},
 	}
 	for i, v := range testcases {
 		resp, _ := db.Get(int64(v.id))
@@ -56,14 +57,14 @@ func testLogRepo_Get(t *testing.T, db LogRepo) {
 func testLogRepo_Tail(t *testing.T, db LogRepo) {
 	testcases := []struct {
 		limit int64
-		resp  *[]Data
+		resp  *[]domain.Data
 	}{
 
-		{1, &[]Data{{202, 1630303817, time.Date(2021, 8, 30, 14, 10, 17, 0, time.Local), "DEBUG", 1, "TEST 202", Status{0, ""}}}},
-		{2, &[]Data{
+		{1, &[]domain.Data{{202, 1630303817, time.Date(2021, 8, 30, 14, 10, 17, 0, time.Local), "DEBUG", 1, "TEST 202", domain.Status{0, ""}}}},
+		{2, &[]domain.Data{
 
-			{202, 1630303817, time.Date(2021, 8, 30, 14, 10, 17, 0, time.Local), "DEBUG", 1, "TEST 202", Status{0, ""}},
-			{201, 1630303785, time.Date(2021, 8, 30, 14, 9, 45, 0, time.Local), "DEBUG", 1, "TEST 2", Status{0, ""}},
+			{202, 1630303817, time.Date(2021, 8, 30, 14, 10, 17, 0, time.Local), "DEBUG", 1, "TEST 202", domain.Status{0, ""}},
+			{201, 1630303785, time.Date(2021, 8, 30, 14, 9, 45, 0, time.Local), "DEBUG", 1, "TEST 2", domain.Status{0, ""}},
 		}},
 	}
 	for i, v := range testcases {
