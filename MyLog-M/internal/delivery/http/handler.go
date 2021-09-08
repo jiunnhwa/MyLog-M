@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
+	"io"
 	"log"
 	"net/http"
 	"strconv"
@@ -131,4 +132,18 @@ type ViewData struct {
 	PageTitle string
 	Records   []domain.Data
 	RowCount  int
+}
+
+// HealthCheck returns the status 200 OK
+func HealthCheck(w http.ResponseWriter, r *http.Request) {
+	// A very simple health check.
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+
+	io.WriteString(w, `Ok`)
+}
+
+//handles home page
+func Home(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Welcome to MyLog-As-A-Service.")
 }
